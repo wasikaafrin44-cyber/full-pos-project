@@ -1,0 +1,170 @@
+<div class="login-wrapper d-flex vh-100">
+
+  <!-- Left Panel -->
+  <div class="left-panel d-none d-lg-flex flex-column align-items-center justify-content-center p-5 text-white"
+    style="width:45%; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);">
+
+    <div class="text-center mb-5">
+      <div class="brand-icon mb-4">
+        <i class="bi bi-shop-window" style="font-size:3rem;"></i>
+      </div>
+      <h1 class="fw-bold mb-2" style="font-size:2.2rem;">Point Of Sales</h1>
+      <p class="opacity-75 fs-5">Smart retail management system</p>
+    </div>
+
+    <!-- Features -->
+    <div class="w-100" style="max-width:340px;">
+      <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded-3"
+        style="background:rgba(255,255,255,0.07);">
+        <div class="rounded-circle p-2" style="background:rgba(99,102,241,0.3);">
+          <i class="bi bi-lightning-charge-fill text-white"></i>
+        </div>
+        <div>
+          <div class="fw-semibold small">Fast Checkout</div>
+          <div class="opacity-50" style="font-size:0.75rem;">Process sales in seconds</div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-3 mb-3 p-3 rounded-3"
+        style="background:rgba(255,255,255,0.07);">
+        <div class="rounded-circle p-2" style="background:rgba(16,185,129,0.3);">
+          <i class="bi bi-graph-up-arrow text-white"></i>
+        </div>
+        <div>
+          <div class="fw-semibold small">Real-time Reports</div>
+          <div class="opacity-50" style="font-size:0.75rem;">Track sales & inventory live</div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-3 p-3 rounded-3"
+        style="background:rgba(255,255,255,0.07);">
+        <div class="rounded-circle p-2" style="background:rgba(245,158,11,0.3);">
+          <i class="bi bi-shield-check-fill text-white"></i>
+        </div>
+        <div>
+          <div class="fw-semibold small">Role-based Access</div>
+          <div class="opacity-52" style="font-size:0.75rem;">Admin, Manager & Cashier</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Panel -->
+  <div class="right-panel flex-grow-1 d-flex align-items-center justify-content-center p-4"
+    style="background:#f8fafc;">
+
+    <div style="width:100%; max-width:440px;">
+
+      <!-- Mobile Brand -->
+      <div class="d-lg-none text-center mb-4">
+        <i class="bi bi-shop-window fs-1 text-primary"></i>
+        <h3 class="fw-bold mt-2">Point Of Sales</h3>
+      </div>
+
+      <div class="card border-0 shadow-lg p-4" style="border-radius:20px;">
+
+        <h4 class="fw-bold mb-1">Welcome back!</h4>
+        <p class="text-muted small mb-4">Sign in to your account to continue</p>
+
+        <!-- ✅ Role Quick Select -->
+        <div class="mb-4">
+          <label class="form-label small fw-semibold text-uppercase text-muted mb-2">
+            Quick Login — Select Role
+          </label>
+          <div class="row g-2">
+            @for (card of roleCards; track card.role) {
+            <div class="col-4">
+              <div class="role-card p-2 rounded-3 text-center"
+                [style.background-color]="email === card.email ? card.bg : '#f8fafc'"
+                [style.border]="email === card.email ? '2px solid ' + card.color : '2px solid #e2e8f0'"
+                style="cursor:pointer; transition: all 0.2s;"
+                (click)="selectRole(card)">
+                <i class="bi mb-1 d-block" [class]="card.icon"
+                  [style.color]="card.color" style="font-size:1.3rem;"></i>
+                <div class="fw-bold" [style.color]="card.color" style="font-size:0.8rem;">
+                  {{ card.role }}
+                </div>
+                <div class="text-muted" style="font-size:0.7rem;">{{ card.description }}</div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Login Form -->
+        <form (ngSubmit)="login()">
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-uppercase text-muted">Email</label>
+            <div class="input-group">
+              <span class="input-group-text" style="background:#f1f5f9; border-right:none;">
+                <i class="bi bi-envelope text-muted"></i>
+              </span>
+              <input type="email" class="form-control"
+                style="border-left:none; border-radius:0 10px 10px 0; background:#f1f5f9;"
+                placeholder="Enter your email"
+                [(ngModel)]="email" name="email" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-uppercase text-muted">Password</label>
+            <div class="input-group">
+              <span class="input-group-text" style="background:#f1f5f9; border-right:none;">
+                <i class="bi bi-lock text-muted"></i>
+              </span>
+              <input [type]="showPassword() ? 'text' : 'password'"
+                class="form-control"
+                style="border-left:none; border-right:none; background:#f1f5f9;"
+                placeholder="Enter your password"
+                [(ngModel)]="password" name="password" required>
+              <span class="input-group-text"
+                style="background:#f1f5f9; border-left:none; cursor:pointer; border-radius:0 10px 10px 0;"
+                (click)="togglePassword()">
+                <i class="bi" [class.bi-eye]="!showPassword()" [class.bi-eye-slash]="showPassword()"
+                  style="color:#94a3b8;"></i>
+              </span>
+            </div>
+          </div>
+
+          <!-- Error -->
+          @if (errorMessage()) {
+          <div class="alert border-0 mb-3 d-flex align-items-center gap-2"
+            style="background-color:#fce4ec; color:#c62828; border-radius:10px;">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span class="small">{{ errorMessage() }}</span>
+          </div>
+          }
+
+          <!-- Submit -->
+          <button type="submit" class="btn w-100 py-3 fw-bold mt-2"
+            style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color:white; border:none; border-radius:12px; font-size:1rem;"
+            [disabled]="isLoading()">
+            @if (isLoading()) {
+              <span class="spinner-border spinner-border-sm me-2"></span>Signing in...
+            } @else {
+              <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+            }
+          </button>
+
+        </form>
+
+        <!-- Credentials hint -->
+        <!-- <div class="mt-4 p-3 rounded-3" style="background:#f8fafc; border:1px solid #e2e8f0;">
+          <div class="small fw-semibold text-muted text-uppercase mb-2">Demo Credentials</div>
+          @for (card of roleCards; track card.role) {
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="badge rounded-pill px-2"
+              [style.background-color]="card.bg"
+              [style.color]="card.color">
+              {{ card.role }}
+            </span>
+            <span class="small text-muted font-monospace">{{ card.email }}</span>
+            <span class="small text-muted font-monospace">{{ card.password }}</span>
+          </div>
+          }
+        </div> -->
+
+      </div>
+    </div>
+  </div>
+</div>

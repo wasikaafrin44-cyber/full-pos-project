@@ -1,0 +1,260 @@
+<div class="container-fluid py-4">
+
+  <!-- ✅ Low Stock Alert Banner -->
+  @if (showLowStockAlert()) {
+  <div class="alert border-0 shadow-sm mb-4 d-flex align-items-start gap-3"
+    style="background-color:#fff5f5; border-left: 5px solid #e53935 !important; border-radius:14px;">
+    <div class="pt-1">
+      <i class="bi bi-exclamation-triangle-fill fs-4" style="color:#e53935;"></i>
+    </div>
+    <div class="flex-grow-1">
+      <div class="fw-bold mb-1" style="color:#b71c1c;">
+        Low Stock Warning — {{ lowStockProducts().length }} product(s) running low!
+      </div>
+      <div class="d-flex flex-wrap gap-2 mt-2">
+        @for (p of lowStockProducts(); track p.id) {
+        <span class="badge px-3 py-2 rounded-pill d-flex align-items-center gap-1"
+          style="background-color:#fce4ec; color:#c62828; font-size:0.85rem;">
+          <i class="bi bi-box-seam"></i>
+          {{ p.name }}
+          <span class="fw-bold ms-1">({{ p.stock }} left)</span>
+        </span>
+        }
+      </div>
+    </div>
+    <button class="btn btn-sm ms-auto"
+      style="color:#e53935; background:none; border:none;"
+      (click)="dismissAlert()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+  }
+
+  <!-- Header -->
+  <div class="row mb-4 align-items-center">
+    <div class="col">
+      <h2 class="mb-0 fw-bold">Products Inventory</h2>
+      <p class="text-muted mb-0">Manage your product catalog and stock</p>
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-primary d-flex align-items-center gap-2" (click)="openAddModal()">
+        <i class="bi bi-plus-lg"></i>
+        Add New Product
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="row mb-4 g-3">
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100 p-4" style="border-radius:16px; background:linear-gradient(135deg,#e8f4fd,#fff);">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="small fw-semibold text-uppercase mb-2" style="color:#1a73e8;">Total Products</p>
+            <h3 class="fw-bold mb-0" style="color:#0d47a1;">{{ productService.products().length }}</h3>
+          </div>
+          <div class="rounded-3 p-3" style="background-color:#bbdefb;">
+            <i class="bi bi-box-seam fs-4" style="color:#1565c0;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100 p-4" style="border-radius:16px; background:linear-gradient(135deg,#fff8e1,#fff);">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="small fw-semibold text-uppercase mb-2" style="color:#f57f17;">Out of Stock</p>
+            <h3 class="fw-bold mb-0" style="color:#e65100;">{{ outOfStockProductsCount() }}</h3>
+          </div>
+          <div class="rounded-3 p-3" style="background-color:#ffe082;">
+            <i class="bi bi-exclamation-triangle fs-4" style="color:#f57f17;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100 p-4" style="border-radius:16px; background:linear-gradient(135deg,#fce4ec,#fff);">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="small fw-semibold text-uppercase mb-2" style="color:#c62828;">Low Stock</p>
+            <h3 class="fw-bold mb-0" style="color:#b71c1c;">{{ lowStockProducts().length }}</h3>
+            <p class="small mt-1 mb-0" style="color:#e57373;">Less than 3 units</p>
+          </div>
+          <div class="rounded-3 p-3" style="background-color:#ffcdd2;">
+            <i class="bi bi-graph-down-arrow fs-4" style="color:#c62828;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card border-0 shadow-sm" style="border-radius:16px;">
+    <div class="card-header bg-white py-3 border-0 px-4">
+      <div class="row align-items-center">
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-0">
+              <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control bg-light border-0"
+              placeholder="Search products..."
+              [value]="searchQuery()" (input)="onSearch($event)">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light text-muted small text-uppercase">
+          <tr>
+            <th class="px-4 py-3">ID</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Brand</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th class="text-end px-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of filteredProducts(); track product.id) {
+          <tr [style.background-color]="product.stock < 3 && product.stock > 0 ? '#fff5f5' : ''">
+            <td class="px-4">
+              <span class="fw-bold" style="color:#1a73e8;">{{ product.id }}</span>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold small"
+                  style="width:34px;height:34px;min-width:34px;background-color:#e8f4fd;color:#1a73e8;">
+                  {{ product.name[0].toUpperCase() }}
+                </div>
+                <span class="fw-semibold">{{ product.name }}</span>
+              </div>
+            </td>
+            <td class="text-muted small">{{ product.category }}</td>
+            <td class="text-muted small">{{ product.brand }}</td>
+            <td class="fw-semibold" style="color:#2e7d32;">${{ product.price }}</td>
+            <td>
+              <!-- ✅ Red badge if stock < 3, green if ok, gray if 0 -->
+              @if (product.stock === 0) {
+                <span class="badge rounded-pill px-3 py-2"
+                  style="background-color:#eeeeee; color:#757575;">Out of Stock</span>
+              } @else if (product.stock < 3) {
+                <span class="badge rounded-pill px-3 py-2 d-flex align-items-center gap-1"
+                  style="background-color:#fce4ec; color:#c62828; width:fit-content;">
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                  {{ product.stock }} left
+                </span>
+              } @else {
+                <span class="badge rounded-pill px-3 py-2"
+                  style="background-color:#e8f5e9; color:#2e7d32;">{{ product.stock }} in stock</span>
+              }
+            </td>
+            <td class="text-end px-4">
+              <button class="btn btn-sm me-2 fw-semibold"
+                style="background-color:#e8f4fd; color:#1a73e8; border:none; border-radius:8px;"
+                (click)="openEditModal(product)">
+                <i class="bi bi-pencil-square me-1"></i>Edit
+              </button>
+              <button class="btn btn-sm fw-semibold"
+                style="background-color:#fce4ec; color:#c62828; border:none; border-radius:8px;"
+                (click)="deleteProduct(product.id)">
+                <i class="bi bi-trash me-1"></i>Delete
+              </button>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="7" class="text-center py-5 text-muted">
+              <i class="bi bi-box fs-1 d-block mb-3 opacity-25"></i>
+              No products found.
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+@if (showModal()) {
+<div class="modal d-block" tabindex="-1" style="z-index:1055;">
+  <div class="modal-backdrop show" style="z-index:1054;" (click)="closeModal()"></div>
+  <div class="modal-dialog modal-dialog-centered" style="z-index:1056;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius:20px;">
+
+      <div class="modal-header border-0 px-4 pt-4 pb-0">
+        <div>
+          <h5 class="fw-bold mb-1">{{ isEditing() ? 'Edit Product' : 'Add New Product' }}</h5>
+          <p class="text-muted small mb-0">{{ isEditing() ? 'Update product details' : 'Fill in the details below' }}</p>
+        </div>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <form (ngSubmit)="saveProduct()">
+
+          <div class="mb-3">
+            <label class="form-label small fw-semibold text-uppercase text-muted">Product Name</label>
+            <input type="text" class="form-control" style="border-radius:10px;"
+              [(ngModel)]="formProduct.name" name="name" required>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-uppercase text-muted">Category</label>
+              <select class="form-select" style="border-radius:10px;"
+                [(ngModel)]="formProduct.categoryId" name="categoryId">
+                <option [value]="0" disabled>Select Category</option>
+                @for (cat of categoryService.categories(); track cat.id) {
+                  <option [value]="cat.id">{{ cat.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-uppercase text-muted">Brand</label>
+              <select class="form-select" style="border-radius:10px;"
+                [(ngModel)]="formProduct.brandId" name="brandId">
+                <option [value]="0" disabled>Select Brand</option>
+                @for (brand of brandService.brands(); track brand.id) {
+                  <option [value]="brand.id">{{ brand.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-uppercase text-muted">Price</label>
+              <input type="number" class="form-control" style="border-radius:10px;"
+                [(ngModel)]="formProduct.price" name="price" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold text-uppercase text-muted">Stock</label>
+              <input type="number" class="form-control" style="border-radius:10px;"
+                [(ngModel)]="formProduct.stock" name="stock" required>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn py-2 fw-bold"
+              style="background-color:#e8f4fd; color:#1a73e8; border:none; border-radius:12px;">
+              <i class="bi bi-check-lg me-1"></i>
+              {{ isEditing() ? 'Update Product' : 'Save Product' }}
+            </button>
+            <button type="button" class="btn py-2"
+              style="background-color:#f5f5f5; color:#555; border:none; border-radius:12px;"
+              (click)="closeModal()">Cancel</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+}

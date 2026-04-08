@@ -1,0 +1,190 @@
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Purchases Management</h2>
+            <p class="text-muted mb-0">Track and manage inventory procurement</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2" (click)="openAddModal()">
+            <i class="bi bi-plus-lg"></i>
+            Add New Purchase
+        </button>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-muted small text-uppercase">
+                    <tr>
+                        <th class="px-4 py-3">Purchase ID</th>
+                        <th>Supplier</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total Amount</th>
+                        <th class="text-end px-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (purchase of enrichedPurchases(); track purchase.id) {
+                    <tr>
+                        <td class="px-4"><span class="fw-bold text-primary">#PUR-{{ purchase.id }}</span></td>
+                        <td>
+                            <div class="fw-semibold">{{ purchase.supplierName }}</div>
+                        </td>
+                       <td>{{ purchase.date ? (purchase.date | date:'mediumDate') : '-' }}</td>
+                        <td>
+                            <span class="badge" [ngClass]="{
+                                    'bg-success-subtle text-success': purchase.status === 'Received',
+                                    'bg-warning-subtle text-warning': purchase.status === 'Pending',
+                                    'bg-info-subtle text-info': purchase.status === 'Ordered'
+                                }">
+                                {{ purchase.status }}
+                            </span>
+                        </td>
+                        <td class="fw-bold text-dark">${{ purchase.totalAmount }}</td>
+                        <td class="text-end px-4">
+                            <button class="btn btn-icon btn-light" (click)="deletePurchase(purchase.id)">
+                                <i class="bi bi-trash text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-clipboard-x fs-1 d-block mb-3 opacity-25"></i>
+                            No purchases recorded
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Modal -->
+@if (showModal()) {
+<div class="modal d-block" tabindex="-1">
+    <div class="modal-backdrop show" (click)="closeModal()"></div>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <h5 class="fw-bold m-0">New Purchase Record</h5>
+                <button type="button" class="btn-close" (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted text-uppercase">Supplier</label>
+                            <select class="form-select"
+                                [ngModel]="currentPurchase().supplierId"
+                                (ngModelChange)="currentPurchase.set({...currentPurchase(), supplierId: +$event})"
+                                name="supplierId">
+                                <option [value]="0" disabled>Select Supplier</option>
+                                @for (s of supplierService.suppliers(); track s.id) {
+                                    <option [value]="s.id">{{ s.name }}</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted text-uppercase">Purchase Status</label>
+                            <select class="form-select"
+                                [ngModel]="currentPurchase().status"
+                                (ngModelChange)="currentPurchase.set({...currentPurchase(), status: $event})"
+                                name="status">
+                                <option value="Pending">Pending</option>
+                                <option value="Ordered">Ordered</option>
+                                <option value="Received">Received</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light border-0 p-4 mb-4">
+                        <h6 class="fw-bold mb-3">Add Products to Purchase</h6>
+                        <div class="row g-2">
+                            <div class="col-md-5">
+                                <select class="form-select border-0"
+                                    [ngModel]="newItem().productId"
+                                    (ngModelChange)="newItem.set({...newItem(), productId: +$event})"
+                                    name="newItemProduct">
+                                    <option [value]="0" disabled>Select Product</option>
+                                    @for (p of productService.products(); track p.id) {
+                                        <option [value]="p.id">{{ p.name }}</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" class="form-control border-0" placeholder="Quantity"
+                                    [ngModel]="newItem().quantity"
+                                    (ngModelChange)="newItem.set({...newItem(), quantity: +$event})"
+                                    name="newItemQty">
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <span class="input-group-text border-0 bg-white">$</span>
+                                    <input type="number" class="form-control border-0" placeholder="Unit Price"
+                                        [ngModel]="newItem().purchasePrice"
+                                        (ngModelChange)="newItem.set({...newItem(), purchasePrice: +$event})"
+                                        name="newItemPrice">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-primary w-100" (click)="addItem()">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (currentPurchase().items.length > 0) {
+                    <div class="table-responsive mb-4">
+                        <table class="table table-sm align-middle">
+                            <thead class="bg-white text-muted small text-uppercase">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th class="text-end"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (item of currentPurchase().items; track $index) {
+                                <tr>
+                                    <td class="fw-medium">{{ item.productName }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>${{ item.purchasePrice }}</td>
+                                    <td class="fw-bold">${{ item.quantity * item.purchasePrice }}</td>
+                                    <td class="text-end">
+                                        <button type="button" class="btn btn-link text-danger p-0"
+                                            (click)="removeItem($index)">
+                                            <i class="bi bi-dash-circle"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    }
+
+                    <div class="d-flex justify-content-end align-items-center mb-2">
+                        <div class="text-end">
+                            <div class="text-muted small text-uppercase">Grand Total</div>
+                            <div class="fs-3 fw-bold text-primary">${{ currentPurchase().totalAmount }}</div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-light px-4 py-2" (click)="closeModal()">Cancel</button>
+                        <button type="button" class="btn btn-primary px-4 py-2 fw-bold"
+                            (click)="savePurchase()">Finalize Purchase</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+}

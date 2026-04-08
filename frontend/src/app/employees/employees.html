@@ -1,0 +1,116 @@
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Staff Management</h2>
+            <p class="text-muted small">Manage your team and roles across outlets</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2" (click)="openAddModal()">
+            <i class="bi bi-person-plus-fill"></i>
+            Add Team Member
+        </button>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Employee</th>
+                        <th>Role</th>
+                        <th>Outlet</th>
+                        <th>Contact</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (employee of employeeService.employees(); track employee.id) {
+                    <tr>
+                        <td class="fw-bold text-secondary px-4">#{{ employee.id }}</td>
+                        <td class="px-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary-subtle text-primary rounded p-2 me-3 d-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px;">
+                                    <i class="bi bi-person fs-5"></i>
+                                </div>
+                                <div class="fw-semibold">{{ employee.name }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border px-3 py-2 fw-medium">
+                                {{ employee.role }}
+                            </span>
+                        </td>
+                        <td class="small fw-medium">{{ employee.outlet }}</td>
+                        <td class="small text-muted">{{ employee.email }}</td>
+                        <td class="text-end px-4">
+                            <button class="btn btn-icon btn-light me-2" (click)="openEditModal(employee)">
+                                <i class="bi bi-pencil-square text-primary"></i>
+                            </button>
+                            <button class="btn btn-icon btn-light" (click)="deleteEmployee(employee.id)">
+                                <i class="bi bi-trash text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-people fs-1 d-block mb-3 opacity-25"></i>
+                            No staff members found
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+@if (showModal()) {
+<div class="modal d-block" tabindex="-1">
+    <div class="modal-backdrop show" (click)="closeModal()"></div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <h5 class="fw-bold m-0">{{ isEditing() ? 'Edit Staff Member' : 'Add Team Member' }}</h5>
+                <button type="button" class="btn-close" (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form (ngSubmit)="saveEmployee()">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Full Name</label>
+                        <input type="text" class="form-control" [(ngModel)]="currentEmployee.name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Email</label>
+                        <input type="email" class="form-control" [(ngModel)]="currentEmployee.email" name="email"
+                            required>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Role</label>
+                            <select class="form-select" [(ngModel)]="currentEmployee.role" name="role" required>
+                                @for (role of roleService.roles(); track role.id) {
+                                <option [value]="role.name">{{ role.name }}</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Outlet</label>
+                            <input type="text" class="form-control" [(ngModel)]="currentEmployee.outlet" name="outlet"
+                                required>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary py-2 fw-bold">
+                            {{ isEditing() ? 'Update Member' : 'Save Member' }}
+                        </button>
+                        <button type="button" class="btn btn-light py-2" (click)="closeModal()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+}
