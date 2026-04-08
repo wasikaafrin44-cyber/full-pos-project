@@ -1,55 +1,49 @@
-POS Full Stack System:
+POS Full Stack System
 
-A full-featured Point of Sale (POS) web application built with Angular for the frontend and Spring Boot for the backend, powered by PostgreSQL. The system provides comprehensive management of products, orders, customers, employees, suppliers, and purchases, along with real-time reporting.
+A full-stack web application for managing Point of Sale (POS) operations, including product, order, customer, employee, supplier, and purchase management. The system supports multiple user roles such as User and Admin.
 
-###Technologies Used
+Features
+User
+User registration and login
+View available products
+Place orders
+Make payment for orders
+Receive order confirmation after admin approval
+Admin
+Manage all users and employees
+Add, update, and delete products, categories, and brands
+Approve or reject orders
+Track sales and purchases
+Monitor suppliers and inventory
+Generate dashboards and reports
+Payment System
+Users can pay instantly during order placement
+Admin verifies payment and approves the order
+System sends order confirmation to the user after approval
+Workflow
+User registers or logs in
+User selects products and places an order
+User makes payment (instant or delayed)
+Admin verifies and approves the order
+User receives order confirmation
+Technologies Used
 
-*Frontend:
+Frontend
 
 Angular 21
 TypeScript
 SCSS
 
-*Backend:
+Backend
 
 Spring Boot
 Java
-RESTful APIs
+REST API
 
-*Database:
+Database
 
 PostgreSQL
 
-###Features
+Tools
 
-Authentication:
-
-Secure login system implemented with Spring Security.
-
-Product Management:
-
-Add, update, delete, and manage products, including categories and brands.
-
-Order Management:
-
-Create, process, and track sales orders in real time.
-
-Customer Management:
-
-Maintain customer records and track purchase history.
-
-Employee Management:
-
-Manage employees and assign roles and permissions.
-
-Supplier Management:
-
-Track suppliers and manage their information efficiently.
-
-Purchase Management:
-
-Handle stock purchases from suppliers with proper tracking.
-
-Dashboard & Reports:
-
-Visual overview of sales, inventory, and overall business performance.
+Git & GitHub
