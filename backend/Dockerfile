@@ -1,18 +1,14 @@
-# Use official Node image
-FROM node:18-alpine
-
-# Set working directory inside container
+# Build stage
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copy package files and install dependencies
-COPY package*.json ./
-RUN npm install
-
-# Copy rest of backend code
-COPY . .
-
-# Expose the port your app runs on
-EXPOSE 3000
-
-# Start the app
-CMD ["npm", "start"]
+# Run stage
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", git add backend/Dockerfile
+"app.jar"]
