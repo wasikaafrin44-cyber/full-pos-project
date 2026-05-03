@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #4f46e5;
+  --secondary-color: #64748b;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --dark-color: #1e293b;
+  --light-color: #f8fafc;
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 80px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+
+  &:hover {
+    background-color: #4338ca;
+  }
+}
+
+.table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+
+  th {
+    background-color: var(--light-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+  }
+
+  td {
+    padding: 1rem;
+    vertical-align: middle;
+  }
+}
+
+.sidebar {
+  background-color: var(--dark-color) !important;
+  transition: width 0.3s ease;
+}
+
+.nav-link {
+  border-radius: 8px;
+  margin-bottom: 4px;
+  padding: 0.75rem 1rem;
+  color: #94a3b8 !important;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: white !important;
+  }
+
+  &.active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+}
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  border-radius: 12px;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 6px;
+  transition: all 0.2s;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+
+  &:hover {
+    background-color: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+.badge-pill-custom {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 500;
+}
+
+/* Fix for modal backdrop overlapping modal content when inside the .modal container */
+.modal .modal-backdrop {
+  z-index: -1;
+}
+
+
+@media print {
+  /* Hide everything */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Show only invoice */
+  #invoice-print-area,
+  #invoice-print-area * {
+    visibility: visible !important;
+  }
+
+  /* Position invoice cleanly */
+  #invoice-print-area {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 480px !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: white !important;
+    z-index: 9999 !important;
+  }
+
+  /* Hide backdrop and buttons */
+  .modal-backdrop {
+    display: none !important;
+  }
+
+  .modal-footer {
+    display: none !important;
+  }
+
+  /* Force white background on everything inside */
+  #invoice-print-area .bg-primary {
+    background-color: #1a73e8 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Clean page */
+  @page {
+    margin: 10mm;
+    size: A5 portrait;
+  }
+}

@@ -1,0 +1,133 @@
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Customer Management</h2>
+            <p class="text-muted small">Manage your customers and loyalty programs</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2" (click)="openAddModal()">
+            <i class="bi bi-person-plus"></i>
+            Add New Customer
+        </button>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Contact</th>
+                        <th>Type</th>
+                        <th>Join Date</th>
+                        <th>Points</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (customer of customerService.customers(); track customer.id) {
+                    <tr>
+                        <td class="fw-bold text-secondary">#{{ customer.id }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary-subtle text-primary rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold"
+                                    style="width: 40px; height: 40px;">
+                                    {{ customer.name.charAt(0) }}
+                                </div>
+                                <div class="fw-semibold">{{ customer.name }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="small fw-medium">{{ customer.email }}</div>
+                            <div class="small text-muted">{{ customer.phone }}</div>
+                        </td>
+                        <td>
+                            <span class="badge rounded-pill px-3 py-2"
+                                [class.bg-info-subtle]="customer.type === 'Regular'"
+                                [class.text-info]="customer.type === 'Regular'"
+                                [class.bg-warning-subtle]="customer.type === 'New'"
+                                [class.text-warning]="customer.type === 'New'"
+                                [class.bg-success-subtle]="customer.type === 'Membership'"
+                                [class.text-success]="customer.type === 'Membership'">
+                                {{ customer.type }}
+                            </span>
+                        </td>
+                        <td class="small text-muted">{{ customer.joinDate | date:'mediumDate' }}</td>
+                        <td class="fw-bold">{{ customer.loyaltyPoints }}</td>
+                        <td class="text-end">
+                            <button class="btn btn-icon text-primary me-2" (click)="openEditModal(customer)"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-icon text-danger" (click)="deleteCustomer(customer.id)"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            No customers found.
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white py-3 border-0 text-center">
+            <small class="text-muted">Showing {{ customerService.customers().length }} items</small>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+@if (showModal()) {
+<div class="modal d-block" tabindex="-1">
+    <div class="modal-backdrop show" (click)="closeModal()"></div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="fw-bold">{{ isEditing() ? 'Edit Customer' : 'Add New Customer' }}</h5>
+                <button type="button" class="btn-close" (click)="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <form #customerForm="ngForm">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">CUSTOMER NAME</label>
+                        <input type="text" class="form-control" [(ngModel)]="currentCustomer().name" name="name"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">EMAIL</label>
+                        <input type="email" class="form-control" [(ngModel)]="currentCustomer().email" name="email"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">PHONE</label>
+                        <input type="text" class="form-control" [(ngModel)]="currentCustomer().phone" name="phone"
+                            required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold text-muted">TYPE</label>
+                            <select class="form-select" [(ngModel)]="currentCustomer().type" name="type" required>
+                                <option value="Regular">Regular</option>
+                                <option value="New">New</option>
+                                <option value="Membership">Membership</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold text-muted">LOYALTY POINTS</label>
+                            <input type="number" class="form-control" [(ngModel)]="currentCustomer().loyaltyPoints"
+                                name="loyaltyPoints" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" (click)="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-primary px-4" (click)="saveCustomer()">
+                    {{ isEditing() ? 'Update Customer' : 'Save Customer' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}

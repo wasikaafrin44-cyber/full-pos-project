@@ -1,0 +1,68 @@
+/* Full height for container */
+.container-fluid {
+  height: 100vh;
+}
+
+/* Left panel gradient */
+.bg-primary {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+  color: white;
+}
+
+/* Card shadow and rounded corners */
+.card {
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Input fields focus effect */
+input.form-control:focus {
+  border-color: #6610f2;
+  box-shadow: 0 0 5px rgba(102, 16, 242, 0.5);
+}
+
+/* Button hover effect */
+button.btn-primary:hover {
+  background-color: #6610f2;
+  border-color: #6610f2;
+}
+
+/* Small responsive text for footer */
+p.text-muted {
+  font-size: 0.9rem;
+}
+
+/* Optional: smooth transition for input & button */
+input.form-control,
+button.btn-primary {
+  transition: all 0.3s ease;
+}
+.login-wrapper {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.brand-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.role-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+  border-radius: 20px !important;
+}
+
+.form-control:focus,
+.input-group-text {
+  box-shadow: none !important;
+  border-color: #e2e8f0 !important;
+}
